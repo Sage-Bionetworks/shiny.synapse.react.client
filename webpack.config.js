@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports = {
-    entry: path.join(__dirname, 'srcjs', 'user_card.jsx'),
+    entry: [path.join(__dirname, 'srcjs', 'user_card.jsx')],
     output: {
         path: path.join(__dirname, 'inst/htmlwidgets'),
         filename: 'user_card.js'
@@ -9,16 +9,36 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.jsx?$/,
+                test: /\.(js|jsx)?$/,
+                exclude: /node_modules/,
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-env', '@babel/preset-react']
+                    presets: ['@babel/preset-env', '@babel/preset-react'],
+                    plugins: [['@babel/plugin-transform-runtime', {
+                        "corejs": 2
+                    }]]
                 }
             },
             // For CSS so that import "path/style.css"; works
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
+            },
+
+            /**
+             * File loader for supporting images, for example, in CSS files.
+             */
+            {
+                test: /\.(jpg|png|gif)$/,
+                use: 'file-loader'
+            },
+
+            /**
+             * File loader for supporting images, for example, in CSS files.
+             */
+            {
+                test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
+                use: 'file-loader'
             }
         ]
     },
